@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero AutoVista - Your Freedom on Two Wheels</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family:Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        // ADDED: Primary color palette from HostelHub.html
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#2563EB',
+                            '50': '#EFF6FF',
+                            '100': '#DBEAFE',
+                            '200': '#BFDBFE',
+                            '300': '#93C5FD',
+                            '400': '#60A5FA',
+                            '500': '#3B82F6',
+                            '600': '#2563EB',
+                            '700': '#1D4ED8',
+                            '800': '#1E40AF',
+                            '900': '#1E3A8A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Soft Animated Background */
+        @keyframes moveBgAutoVista {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .soft-animated-bg {
+            background: linear-gradient(-45deg, #a8c0ff, #b3ffb3, #cca9ff, #ffb3ef, #ffd7b3, #d7b3ff);
+            background-size: 400% 400%;
+            animation: moveBgAutoVista 20s ease infinite;
+        }
+        .dark .soft-animated-bg {
+            background: linear-gradient(-45deg, #0f2027, #203a43, #4a0e4e, #2c5364, #1e3a8a);
+            background-size: 400% 400%;
+            animation: moveBgAutoVista 20s ease infinite;
+        }
+
+        /* Hero Background Slider */
+        .hero-bg-track {
+            display: flex;
+            width: 200%; 
+            animation: slideShow 40s linear infinite;
+        }
+        .hero-bg-slide {
+            width: 12.5%; 
+            flex-shrink: 0;
+            height: 60vh; 
+            background-size: cover;
+            background-position: center;
+            animation: kenBurns 15s ease-in-out infinite alternate;
+        }
+        .hero-bg-slide:nth-child(odd) { animation-direction: alternate-reverse; }
+        .hero-bg-slide:nth-child(2) { animation-duration: 18s; }
+        .hero-bg-slide:nth-child(3) { animation-duration: 16s; }
+
+        @keyframes slideShow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
+        }
+        
+        @keyframes kenBurns {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(2%, 2%); }
+        }
+
+        /* Glassmorphism Class */
+        .glass-morphism {
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-morphism {
+            background-color: rgba(31, 41, 55, 0.4); 
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        .dark ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* View transition */
+        .view-content {
+            display: none;
+        }
+        .view-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-in-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Active Nav Link */
+        .nav-link.active { color: #2563EB; } /* primary-600 */
+        .dark .nav-link.active { color: #60A5FA; } /* primary-400 */
+        
+        /* Custom card glow on hover */
+        .vehicle-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px rgba(37, 99, 235, 0.1); /* primary-600 */
+        }
+        .dark .vehicle-card:hover {
+            box-shadow: 0 20px 30px rgba(96, 165, 250, 0.1); /* primary-400 */
+        }
+        
+        /* Staggered card load-in animation */
+        .card-load-in {
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-button[aria-expanded="true"] + .accordion-content {
+            max-height: 500px;
+        }
+        .accordion-button[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Style for range input */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 20px; height: 20px;
+            background: #2563EB; /* primary-600 */
+            cursor: pointer; border-radius: 50%;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px; height: 20px;
+            background: #2563EB; /* primary-600 */
+            cursor: pointer; border-radius: 50%;
+        }
+        
+        /* UX Notification toast */
+        .toast-notification {
+            position: fixed;
+            top: 80px; 
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            background-color: #22c55e;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            opacity: 0;
+            animation: toastFade 3s ease-in-out;
+        }
+        @keyframes toastFade {
+            0%, 100% { opacity: 0; transform: translateY(-20px) translateX(-50%); }
+            10%, 90% { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+        
+    </style>
+</head>
+<body class="soft-animated-bg text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+    
+    <!-- Main Content Wrapper (above animated background) -->
+    <div class="relative z-10">
+
+        <!-- Header / Navbar -->
+        <header class="sticky top-0 z-50 w-full">
+            <nav class="glass-morphism">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-16">
+                        <!-- Logo (UPDATED) -->
+                        <div class="flex-shrink-0 flex items-center">
+                            <i data-lucide="rocket" class="h-8 w-8 text-primary-600 dark:text-primary-400"></i>
+                            <span class="ml-2 text-2xl font-bold text-gray-900 dark:text-white">Hero AutoVista</span>
+                        </div>
+                        
+                        <!-- Desktop Nav -->
+                        <div class="hidden md:flex md:items-center md:space-x-8">
+                            <a href="#" class="nav-link text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors active" data-nav="home">Home</a>
+                            <a href="#" class="nav-link text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors" data-nav="explore">Explore</a>
+                            <a href="#" class="nav-link text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors" data-nav="book">Book a Ride</a>
+                            <a href="#" class="nav-link text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors" data-nav="contact">Contact</a>
+                            <a href="#" class="nav-link text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors" data-nav="faq">FAQ</a>
+                        </div>
+                        
+                        <!-- Theme Toggle & Mobile Menu Button -->
+                        <div class="flex items-center">
+                            <button id="theme-toggle" class="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white/30 dark:hover:bg-gray-700/50 focus:outline-none transition-colors">
+                                <i id="theme-icon-sun" data-lucide="sun" class="h-6 w-6 hidden"></i>
+                                <i id="theme-icon-moon" data-lucide="moon" class="h-6 w-6 hidden"></i>
+                            </button>
+                            <div class="md:hidden ml-2">
+                                <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-white/30 dark:hover:bg-gray-700/50 focus:outline-none transition-colors">
+                                    <i data-lucide="menu" class="h-6 w-6"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="md:hidden hidden glass-morphism">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50 active" data-nav="home">Home</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" data-nav="explore">Explore</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" data-nav="book">Book a Ride</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" data-nav="contact">Contact</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" data-nav="faq">FAQ</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <!-- Home View -->
+            <section id="view-home" class="view-content active">
+                <!-- Hero Section (UPDATED) -->
+                <div class="relative rounded-2xl overflow-hidden min-h-[60vh] flex items-center justify-center text-center p-8 bg-gray-800">
+                    <div class="hero-bg-slider absolute inset-0 opacity-30 overflow-hidden">
+                        <div class="hero-bg-track flex">
+                            <!-- Set 1 -->
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--drum-brake-obd-2b1744875559407.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--hf-100-obd-2b1744803664892.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--standard-obd-2b1744268373446.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--stealth-obd-2b1746622466805.jpg?q=80')"></div>
+                            <!-- Set 2 (for seamless loop) -->
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--drum-brake-obd-2b1744875559407.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--hf-100-obd-2b1744803664892.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--standard-obd-2b1744268373446.jpg?q=80')"></div>
+                            <div class="hero-bg-slide" style="background-image: url('https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--stealth-obd-2b1746622466805.jpg?q=80')"></div>
+                        </div>
+                    </div>
+                    <div class="relative z-10">
+                        <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+                            Welcome to the World of Hero
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                            Experience the thrill. Ride with the leader. <span class="font-bold">Hum Mein Hai Hero.</span>
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <button data-nav="explore" class="nav-link-button inline-flex items-center justify-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                                Explore Models
+                                <i data-lucide="arrow-right" class="ml-2 h-5 w-5"></i>
+                            </button>
+                            <button data-nav="book" class="nav-link-button inline-flex items-center justify-center px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                                Book a Test Ride
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why Choose Us Section -->
+                <section class="py-16 sm:py-24">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+                            The Hero AutoVista Advantage
+                        </h2>
+                        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                            We're more than just a showroom. We're your partners in the ride.
+                        </p>
+                    </div>
+                    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="glass-morphism p-8 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300">
+                                <i data-lucide="award" class="h-6 w-6"></i>
+                            </div>
+                            <h3 class="mt-6 text-xl font-bold">Authorized Dealer</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Every vehicle is 100% genuine, directly from Hero MotoCorp.</p>
+                        </div>
+                        <div class="glass-morphism p-8 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300">
+                                <i data-lucide="dollar-sign" class="h-6 w-6"></i>
+                            </div>
+                            <h3 class="mt-6 text-xl font-bold">Hero GoodLife</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Get pre-approved in minutes with exclusive Hero financing options.</p>
+                        </div>
+                        <div class="glass-morphism p-8 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300">
+                                <i data-lucide="wrench" class="h-6 w-6"></i>
+                            </div>
+                            <h3 class="mt-6 text-xl font-bold">Certified Service</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Our state-of-the-art service center is here to keep you on the road.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Top Models Section -->
+                <section class="py-16 sm:py-24 glass-morphism rounded-2xl -mx-4 px-4">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+                            Hot Picks
+                        </h2>
+                        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                            Check out the models everyone is talking about.
+                        </p>
+                    </div>
+                    <div id="top-models-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Top models will be injected here by JS -->
+                    </div>
+                </section>
+
+                <!-- Testimonials Section (RE-ADDED & UPDATED) -->
+                <section class="py-16 sm:py-24">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+                            What Our Riders Say
+                        </h2>
+                        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                            Real stories from the Hero AutoVista family.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="glass-morphism p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                            <div class="flex items-center mb-4">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1c373c2153?w=100&h=100&fit=crop" alt="Rider Avatar" onerror="this.src='https://placehold.co/100x100/AAB/FFF?text=RA'">
+                                <div class="ml-4">
+                                    <div class="font-bold">Rahul A.</div>
+                                    <div class="flex text-yellow-400">
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="italic">"Seamless experience from browsing to booking my Splendor+. The staff was incredibly helpful. Got my new bike in 2 days!"</p>
+                        </div>
+                        <div class="glass-morphism p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                            <div class="flex items-center mb-4">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Rider Avatar" onerror="this.src='https://placehold.co/100x100/BBA/FFF?text=PS'">
+                                <div class="ml-4">
+                                    <div class="font-bold">Priya S.</div>
+                                    <div class="flex text-yellow-400">
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="italic">"The 'Compare' feature on the website was a game-changer. Helped me pick between the Destini and Pleasure+ for my city commute."</p>
+                        </div>
+                        <div class="glass-morphism p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                            <div class="flex items-center mb-4">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Rider Avatar" onerror="this.src='https://placehold.co/100x100/ABC/FFF?text=VK'">
+                                <div class="ml-4">
+                                    <div class="font-bold">Vikram K.</div>
+                                    <div class="flex text-yellow-400">
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star" class="h-5 w-5 fill-current"></i>
+                                        <i data-lucide="star-half" class="h-5 w-5 fill-current"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="italic">"Great prices on my Xtreme 160R and the financing options were explained clearly. Highly recommend Hero AutoVista."</p>
+                        </div>
+                    </div>
+                </section>
+                
+            </section>
+
+            <!-- Explore View (UPDATED) -->
+            <section id="view-explore" class="view-content">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-extrabold">Explore Our Collection</h1>
+                    <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">Find the Hero that's built for you.</p>
+                </div>
+                
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Filters & EMI Calculator (UPDATED) -->
+                    <aside class="lg:w-1/4 p-6 glass-morphism rounded-2xl shadow-xl h-fit">
+                        <h3 class="text-xl font-bold mb-4">Filters</h3>
+                        <div class="space-y-4">
+                            <!-- BRAND FILTER REMOVED -->
+                            <div>
+                                <label for="filter-category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                                <select id="filter-category" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                    <option value="all">All Categories</option>
+                                    <option value="Commuter">Commuter</option>
+                                    <option value="Sport">Sport</option>
+                                    <option value="Scooter">Scooter</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="filter-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Max Price (₹)</label>
+                                <input type="range" id="filter-price" min="60000" max="200000" value="200000" step="5000" class="w-full h-2 bg-gray-200/50 rounded-lg appearance-none cursor-pointer dark:bg-gray-700/50">
+                                <div class="text-right text-sm text-gray-600 dark:text-gray-400">Up to ₹<span id="filter-price-value">2,00,000</span></div>
+                            </div>
+                            <button id="filter-apply" class="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-md transition-colors">Apply Filters</button>
+                        </div>
+                        
+                        <!-- EMI Calculator -->
+                        <div class="mt-8 border-t border-white/30 dark:border-gray-700/50 pt-6">
+                            <h3 class="text-xl font-bold mb-4">EMI Calculator</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label for="emi-amount" class="block text-sm font-medium">Loan Amount (₹)</label>
+                                    <input type="number" id="emi-amount" placeholder="e.g., 80000" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                </div>
+                                <div>
+                                    <label for="emi-rate" class="block text-sm font-medium">Interest Rate (% p.a.)</label>
+                                    <input type="number" id="emi-rate" placeholder="e.g., 8.5" value="8.5" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                </div>
+                                <div>
+                                    <label for="emi-tenure" class="block text-sm font-medium">Tenure (Months)</label>
+                                    <input type="number" id="emi-tenure" placeholder="e.g., 24" value="24" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                </div>
+                                <button id="emi-calculate" class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg shadow-md transition-colors">Calculate</button>
+                                <div id="emi-result" class="mt-4 text-center font-bold text-lg"></div>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                    <!-- Vehicle Grid -->
+                    <div class="lg:w-3/4">
+                        <div id="grid-loader" class="hidden text-center py-16">
+                            <i data-lucide="loader-2" class="h-12 w-12 mx-auto text-primary-600 animate-spin"></i>
+                            <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">Finding your ride...</p>
+                        </div>
+                        <div id="vehicle-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <!-- Vehicle cards will be injected here by JS -->
+                        </div>
+                        <div id="no-results" class="hidden text-center text-gray-500 dark:text-gray-400 py-16">
+                            <i data-lucide="search-x" class="h-16 w-16 mx-auto mb-4"></i>
+                            <h3 class="text-2xl font-bold">No Vehicles Found</h3>
+                            <p>Try adjusting your filters to find your perfect ride.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Book a Ride View -->
+            <section id="view-book" class="view-content">
+                <div class="max-w-3xl mx-auto glass-morphism p-8 sm:p-12 rounded-2xl shadow-2xl">
+                    <div class="text-center mb-10">
+                        <h1 class="text-4xl font-extrabold">Book Your Test Ride</h1>
+                        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                            Get a feel for your new Hero. Fill out the form below and we'll get in touch.
+                        </p>
+                    </div>
+                    <form id="booking-form" class="space-y-6">
+                        <div>
+                            <label for="book-name" class="block text-sm font-medium">Full Name</label>
+                            <input type="text" id="book-name" name="book-name" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                        </div>
+                        <div>
+                            <label for="book-phone" class="block text-sm font-medium">Phone Number</label>
+                            <input type="tel" id="book-phone" name="book-phone" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                        </div>
+                        <div>
+                            <label for="book-email" class="block text-sm font-medium">Email Address</label>
+                            <input type="email" id="book-email" name="book-email" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                        </div>
+                        <div>
+                            <label for="book-model" class="block text-sm font-medium">Preferred Model</label>
+                            <select id="book-model" name="book-model" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                                <option value="">Select a model</option>
+                                <!-- Models will be populated by JS -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="book-date" class="block text-sm font-medium">Preferred Date</label>
+                                <input type="date" id="book-date" name="book-date" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4" min="">
+                            </div>
+                            <div>
+                                <label for="book-time" class="block text-sm font-medium">Preferred Time Slot</label>
+                                <select id="book-time" name="book-time" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                                    <option value="10:00 - 11:00">10:00 AM - 11:00 AM</option>
+                                    <option value="11:00 - 12:00">11:00 AM - 12:00 PM</option>
+                                    <option value="14:00 - 15:00">02:00 PM - 03:00 PM</option>
+                                    <option value="15:00 - 16:00">03:00 PM - 04:00 PM</option>
+                                    <option value="16:00 - 17:00">04:00 PM - 05:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="book-message" class="block text-sm font-medium">Additional Message (Optional)</label>
+                            <textarea id="book-message" name="book-message" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 px-4 py-2"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300 transform hover:scale-105">
+                                Request Test Ride
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Contact View -->
+            <section id="view-contact" class="view-content">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-extrabold">Get in Touch</h1>
+                    <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">We'd love to hear from you. Visit us or drop a line.</p>
+                </div>
+                
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Contact Form -->
+                    <div class="lg:w-2/3 glass-morphism p-8 sm:p-12 rounded-2xl shadow-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Send us a Message</h2>
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="contact-name" class="block text-sm font-medium">Full Name</label>
+                                    <input type="text" id="contact-name" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                                </div>
+                                <div>
+                                    <label for="contact-email" class="block text-sm font-medium">Email Address</label>
+                                    <input type="email" id="contact-email" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="contact-subject" class="block text-sm font-medium">Subject</label>
+                                <input type="text" id="contact-subject" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 px-4">
+                            </div>
+                            <div>
+                                <label for="contact-message" class="block text-sm font-medium">Message</label>
+                                <textarea id="contact-message" rows="5" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 px-4 py-2"></textarea>
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Store Info & Map -->
+                    <div class="lg:w-1/3 glass-morphism p-8 sm:p-12 rounded-2xl shadow-2xl h-fit">
+                        <h2 class="text-2xl font-bold mb-6">Visit Our Store</h2>
+                        <div class="space-y-4 text-gray-700 dark:text-gray-300">
+                            <div class="flex items-start">
+                                <i data-lucide="map-pin" class="flex-shrink-0 h-6 w-6 text-primary-600 dark:text-primary-400 mt-1"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold">Address</h3>
+                                    <p>123 AutoVista Lane, Bike City, MH 400001, India</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i data-lucide="phone" class="flex-shrink-0 h-6 w-6 text-primary-600 dark:text-primary-400 mt-1"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold">Phone</h3>
+                                    <p>+91 98765 43210</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i data-lucide="mail" class="flex-shrink-0 h-6 w-6 text-primary-600 dark:text-primary-400 mt-1"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold">Email</h3>
+                                    <p>hello@hero-autovista.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i data-lucide="clock" class="flex-shrink-0 h-6 w-6 text-primary-600 dark:text-primary-400 mt-1"></i>
+                                <div class="ml-4">
+                                    <h3 class="font-bold">Working Hours</h3>
+                                    <p>Mon - Sat: 10:00 AM - 8:00 PM</p>
+                                    <p>Sunday: 11:00 AM - 6:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 rounded-lg overflow-hidden">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.741029802871!2d72.8331191148999!3d19.0310243871138!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c917b2b3a33b%3A0x1c3b31353f6b6c3!2sMumbai%2C%Maharashtra%2C%20India!5e0!3m2!1sen!2sin!4v1678886000000!5m2!1sen!2sin" 
+                                width="100%" 
+                                height="250" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- FAQ View (Bonus) -->
+            <section id="view-faq" class="view-content">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl font-extrabold">Frequently Asked Questions</h1>
+                        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                            Have questions? We have answers.
+                        </p>
+                    </div>
+                    <div class="space-y-4" id="faq-accordion">
+                        <div class="glass-morphism rounded-lg shadow-md overflow-hidden">
+                            <h2>
+                                <button class="accordion-button flex justify-between items-center w-full p-6 text-left text-lg font-medium" aria-expanded="false">
+                                    <span>What financing options are available?</span>
+                                    <i data-lucide="chevron-down" class="accordion-icon h-6 w-6 transition-transform"></i>
+                                </button>
+                            </h2>
+                            <div class="accordion-content px-6 pb-6 text-gray-600 dark:text-gray-300">
+                                <p>We offer flexible financing options through Hero FinCorp and other banking partners. You can get pre-approved in minutes with minimal documentation. Use our EMI calculator on the 'Explore' page to get an estimate!</p>
+                            </div>
+                        </div>
+                        <div class="glass-morphism rounded-lg shadow-md overflow-hidden">
+                            <h2>
+                                <button class="accordion-button flex justify-between items-center w-full p-6 text-left text-lg font-medium" aria-expanded="false">
+                                    <span>Do you accept trade-ins?</span>
+                                    <i data-lucide="chevron-down" class="accordion-icon h-6 w-6 transition-transform"></i>
+                                </button>
+                            </h2>
+                            <div class="accordion-content px-6 pb-6 text-gray-600 dark:text-gray-300">
+                                <p>Yes, we do! Bring your old two-wheeler for a free inspection and get a competitive price that you can use as a down payment for your new Hero vehicle.</p>
+                            </div>
+                        </div>
+                        <div class="glass-morphism rounded-lg shadow-md overflow-hidden">
+                            <h2>
+                                <button class="accordion-button flex justify-between items-center w-full p-6 text-left text-lg font-medium" aria-expanded="false">
+                                    <span>What is the Hero GoodLife program?</span>
+                                    <i data-lucide="chevron-down" class="accordion-icon h-6 w-6 transition-transform"></i>
+                                </button>
+                            </h2>
+                            <div class="accordion-content px-6 pb-6 text-gray-600 dark:text-gray-300">
+                                <p>The Hero GoodLife program is our exclusive customer loyalty program that offers points on service, parts, and referrals, along with insurance benefits and special offers. Ask our team to enroll you!</p>
+                            </div>
+                        </div>
+                        <div class="glass-morphism rounded-lg shadow-md overflow-hidden">
+                            <h2>
+                                <button class="accordion-button flex justify-between items-center w-full p-6 text-left text-lg font-medium" aria-expanded="false">
+                                    <span>How long does delivery take after booking?</span>
+                                    <i data-lucide="chevron-down" class="accordion-icon h-6 w-6 transition-transform"></i>
+                                </button>
+                            </h2>
+                            <div class="accordion-content px-6 pb-6 text-gray-600 dark:text-gray-300">
+                                <p>For 'In Stock' models, delivery can be as fast as 1-2 working days, subject to payment and documentation. For 'Pre-Order' models, our team will provide you with an estimated delivery timeline.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+
+        <!-- Footer (UPDATED) -->
+        <footer class="bg-gray-800 dark:bg-gray-950 text-gray-300 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <!-- About -->
+                    <div class="col-span-2 md:col-span-1">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="rocket" class="h-6 w-6 text-primary-400"></i>
+                            <span class="ml-2 text-xl font-bold text-white">Hero AutoVista</span>
+                        </div>
+                        <p class="text-gray-400">Your trusted partner for Hero two-wheelers. Ride with confidence.</p>
+                        <div class="flex space-x-4 mt-6">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="facebook" class="h-6 w-6"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="instagram" class="h-6 w-6"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="twitter" class="h-6 w-6"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="youtube" class="h-6 w-6"></i></a>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="nav-link text-gray-400 hover:text-white" data-nav="home">Home</a></li>
+                            <li><a href="#" class="nav-link text-gray-400 hover:text-white" data-nav="explore">Explore</a></li>
+                            <li><a href="#" class="nav-link text-gray-400 hover:text-white" data-nav="book">Book a Ride</a></li>
+                            <li><a href="#" class="nav-link text-gray-400 hover:text-white" data-nav="faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <!-- Company -->
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Company</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact -->
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Contact Us</h4>
+                        <ul class="space-y-2 text-gray-400">
+                            <li class="flex items-start"><i data-lucide="map-pin" class="h-5 w-5 mr-2 mt-1 flex-shrink-0"></i> 123 AutoVista Lane, Bike City, MH</li>
+                            <li class="flex items-start"><i data-lucide="phone" class="h-5 w-5 mr-2 mt-1 flex-shrink-0"></i> +91 98765 43210</li>
+                            <li class="flex items-start"><i data-lucide="mail" class="h-5 w-5 mr-2 mt-1 flex-shrink-0"></i> hello@hero-autovista.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500">
+                    &copy; 2024 Hero AutoVista. All rights reserved. Authorized Dealer for Hero MotoCorp.
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- End of relative z-10 wrapper -->
+    
+    <!-- Compare Tray -->
+    <div id="compare-tray" class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-morphism p-4 rounded-t-2xl shadow-2xl flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold text-lg">Compare Vehicles</h4>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">You can add up to 3 vehicles.</p>
+                </div>
+                <div id="compare-items" class="flex items-center gap-4">
+                    <!-- Compare items added here -->
+                </div>
+                <div class="flex gap-2">
+                    <button id="compare-button" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Compare (<span id="compare-count">0</span>)
+                    </button>
+                    <button id="compare-clear" class="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white/30 dark:hover:bg-gray-700/50">
+                        <i data-lucide="x" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Modal -->
+    <div id="modal-backdrop" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
+        <div id="modal-content" class="glass-morphism rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6 relative">
+            <button id="modal-close" class="absolute top-4 right-4 p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white/30 dark:hover:bg-gray-700/50 transition-colors">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            <div id="modal-body">
+                <!-- Modal content injected here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- STATE MANAGEMENT ---
+            const state = {
+                currentView: 'home',
+                theme: localStorage.getItem('theme') || 'system',
+                compareList: [], // stores vehicle IDs
+                // UPDATED: Vehicle database now contains only Hero models with real images
+                vehicles: [
+                    {
+                        id: 1,
+                        name: 'Splendor+',
+                        brand: 'Hero',
+                        category: 'Commuter',
+                        price: 75000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--drum-brake-obd-2b1744875559407.jpg?q=80',
+                        specs: { engine: '97.2 cc', mileage: '65 kmpl', power: '8.02 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 2,
+                        name: 'HF Deluxe',
+                        brand: 'Hero',
+                        category: 'Commuter',
+                        price: 65000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--hf-100-obd-2b1744803664892.jpg?q=80',
+                        specs: { engine: '97.2 cc', mileage: '65 kmpl', power: '8.02 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 3,
+                        name: 'Passion+',
+                        brand: 'Hero',
+                        category: 'Commuter',
+                        price: 78000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--standard-obd-2b1744268373446.jpg?q=80',
+                        specs: { engine: '97.2 cc', mileage: '60 kmpl', power: '8.02 PS' },
+                        stock: 'Low Stock'
+                    },
+                    {
+                        id: 4,
+                        name: 'Glamour 125',
+                        brand: 'Hero',
+                        category: 'Commuter',
+                        price: 85000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--standard1755667400340.jpg?q=80',
+                        specs: { engine: '124.7 cc', mileage: '55 kmpl', power: '10.84 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 5,
+                        name: 'Super Splendor XTEC',
+                        brand: 'Hero',
+                        category: 'Commuter',
+                        price: 90000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--drum-obd-2b1744873466747.jpg?q=80',
+                        specs: { engine: '124.7 cc', mileage: '60 kmpl', power: '10.84 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 6,
+                        name: 'Xtreme 160R',
+                        brand: 'Hero',
+                        category: 'Sport',
+                        price: 130000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--stealth-obd-2b1746622466805.jpg?q=80',
+                        specs: { engine: '163 cc', mileage: '45 kmpl', power: '15.2 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 7,
+                        name: 'Karizma XMR',
+                        brand: 'Hero',
+                        category: 'Sport',
+                        price: 180000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--top1744051710255.jpg?q=80',
+                        specs: { engine: '210 cc', mileage: '35 kmpl', power: '25.5 PS' },
+                        stock: 'Low Stock'
+                    },
+                    {
+                        id: 8,
+                        name: 'Destini 125',
+                        brand: 'Hero',
+                        category: 'Scooter',
+                        price: 80000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--vx-obd-2b1744896748446.jpg?q=80',
+                        specs: { engine: '124.6 cc', mileage: '45 kmpl', power: '9.1 PS' },
+                        stock: 'In Stock'
+                    },
+                    {
+                        id: 9,
+                        name: 'Pleasure+',
+                        brand: 'Hero',
+                        category: 'Scooter',
+                        price: 70000,
+                        imageUrl: 'https://imgd.aeplcdn.com/664x374/n/bw/models/colors/hero-select-model-sport-red-1707151003981.png?q=80',
+                        specs: { engine: '110.9 cc', mileage: '50 kmpl', power: '8.1 PS' },
+                        stock: 'Out of Stock'
+                    }
+                ]
+            };
+            
+            // --- DOM SELECTORS ---
+            const dom = {
+                html: document.documentElement,
+                body: document.body, 
+                themeToggle: document.getElementById('theme-toggle'),
+                themeIconSun: document.getElementById('theme-icon-sun'),
+                themeIconMoon: document.getElementById('theme-icon-moon'),
+                mobileMenuButton: document.getElementById('mobile-menu-button'),
+                mobileMenu: document.getElementById('mobile-menu'),
+                navLinks: document.querySelectorAll('.nav-link'),
+                navLinkButtons: document.querySelectorAll('.nav-link-button'),
+                views: document.querySelectorAll('.view-content'),
+                topModelsGrid: document.getElementById('top-models-grid'),
+                vehicleGrid: document.getElementById('vehicle-grid'),
+                gridLoader: document.getElementById('grid-loader'),
+                noResults: document.getElementById('no-results'),
+                // filterBrand: document.getElementById('filter-brand'), // Removed
+                filterCategory: document.getElementById('filter-category'),
+                filterPrice: document.getElementById('filter-price'),
+                filterPriceValue: document.getElementById('filter-price-value'),
+                filterApply: document.getElementById('filter-apply'),
+                bookModelSelect: document.getElementById('book-model'),
+                bookDateInput: document.getElementById('book-date'),
+                bookingForm: document.getElementById('booking-form'),
+                contactForm: document.getElementById('contact-form'),
+                modalBackdrop: document.getElementById('modal-backdrop'),
+                modalContent: document.getElementById('modal-content'),
+                modalBody: document.getElementById('modal-body'),
+                modalClose: document.getElementById('modal-close'),
+                compareTray: document.getElementById('compare-tray'),
+                compareItems: document.getElementById('compare-items'),
+                compareButton: document.getElementById('compare-button'),
+                compareCount: document.getElementById('compare-count'),
+                compareClear: document.getElementById('compare-clear'),
+                emiAmount: document.getElementById('emi-amount'),
+                emiRate: document.getElementById('emi-rate'),
+                emiTenure: document.getElementById('emi-tenure'),
+                emiCalculate: document.getElementById('emi-calculate'),
+                emiResult: document.getElementById('emi-result'),
+                faqAccordion: document.getElementById('faq-accordion'),
+            };
+
+            // --- FUNCTIONS ---
+
+            /**
+             * Applies the current theme (light/dark/system)
+             */
+            const applyTheme = () => {
+                let theme = state.theme;
+                if (theme === 'system') {
+                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                
+                if (theme === 'dark') {
+                    dom.html.classList.add('dark');
+                    dom.themeIconSun.style.display = 'block';
+                    dom.themeIconMoon.style.display = 'none';
+                } else {
+                    dom.html.classList.remove('dark');
+                    dom.themeIconSun.style.display = 'none';
+                    dom.themeIconMoon.style.display = 'block';
+                }
+                lucide.createIcons();
+            };
+
+            /**
+             * Toggles the theme
+             */
+            const toggleTheme = () => {
+                let newTheme = state.theme;
+                if (newTheme === 'system') {
+                    newTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark';
+                } else {
+                    newTheme = newTheme === 'dark' ? 'light' : 'dark';
+                }
+                state.theme = newTheme;
+                localStorage.setItem('theme', newTheme);
+                applyTheme();
+            };
+            
+            /**
+             * Toggles the mobile menu
+             */
+            const toggleMobileMenu = () => {
+                dom.mobileMenu.classList.toggle('hidden');
+                dom.mobileMenuButton.innerHTML = dom.mobileMenu.classList.contains('hidden') 
+                    ? '<i data-lucide="menu" class="h-6 w-6"></i>' 
+                    : '<i data-lucide="x" class="h-6 w-6"></i>';
+                lucide.createIcons();
+            };
+
+            /**
+             * Handles navigation between views
+             */
+            const navigate = (viewName) => {
+                state.currentView = viewName;
+                
+                dom.views.forEach(view => view.classList.remove('active'));
+                
+                const targetView = document.getElementById(`view-${viewName}`);
+                if (targetView) {
+                    targetView.classList.add('active');
+                }
+                
+                dom.navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.nav === viewName);
+                });
+                
+                if (!dom.mobileMenu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
+                
+                window.scrollTo(0, 0);
+            };
+
+            /**
+             * Formats a number as Indian Rupee currency
+             */
+            const formatCurrency = (amount) => {
+                return new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    maximumFractionDigits: 0,
+                }).format(amount);
+            };
+
+            /**
+             * Gets the stock status badge class
+             */
+            const getStockClass = (stock) => {
+                switch (stock) {
+                    case 'In Stock':
+                        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                    case 'Low Stock':
+                        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+                    case 'Out of Stock':
+                        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+                    default:
+                        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+                }
+            };
+            
+            /**
+             * Creates the HTML for a single vehicle card
+             */
+            const createVehicleCard = (vehicle, index = 0) => {
+                const isOutOfStock = vehicle.stock === 'Out of Stock';
+                const isCompared = state.compareList.includes(vehicle.id);
+
+                return `
+                    <div class="vehicle-card card-load-in glass-morphism rounded-2xl shadow-lg overflow-hidden flex flex-col" style="animation-delay: ${index * 50}ms">
+                        <div class="relative">
+                            <img src="${vehicle.imageUrl}" alt="${vehicle.name}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/600x400/555/FFF?text=Image+Error'">
+                            <span class="absolute top-2 left-2 px-3 py-1 text-xs font-bold rounded-full ${getStockClass(vehicle.stock)}">
+                                ${vehicle.stock}
+                            </span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="text-sm font-medium text-primary-600 dark:text-primary-400">${vehicle.brand} / ${vehicle.category}</span>
+                            <h3 class="text-2xl font-bold mt-1 mb-2">${vehicle.name}</h3>
+                            <div class="text-3xl font-extrabold mb-4">${formatCurrency(vehicle.price)}</div>
+                            
+                            <div class="flex-grow space-y-2 text-gray-600 dark:text-gray-300">
+                                <div class="flex items-center"><i data-lucide="cog" class="h-4 w-4 mr-2 text-gray-400"></i> ${vehicle.specs.engine}</div>
+                                <div class="flex items-center"><i data-lucide="gauge" class="h-4 w-4 mr-2 text-gray-400"></i> ${vehicle.specs.mileage}</div>
+                                <div class="flex items-center"><i data-lucide="zap" class="h-4 w-4 mr-2 text-gray-400"></i> ${vehicle.specs.power}</div>
+                            </div>
+                            
+                            <div class="mt-6 flex flex-col sm:flex-row gap-2">
+                                <button data-id="${vehicle.id}" class="book-ride-btn flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-md transition-colors ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" ${isOutOfStock ? 'disabled' : ''}>
+                                    Book Ride
+                                </button>
+                                <button data-id="${vehicle.id}" class="compare-toggle-btn flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-medium rounded-lg transition-colors ${isCompared ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : ''}">
+                                    ${isCompared ? 'Remove' : 'Compare'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            /**
+             * Renders the vehicle grid based on current filters
+             */
+            const renderVehicles = () => {
+                dom.gridLoader.classList.remove('hidden');
+                dom.vehicleGrid.innerHTML = '';
+                dom.noResults.style.display = 'none';
+
+                setTimeout(() => {
+                    const filters = {
+                        // brand: dom.filterBrand.value, // Removed
+                        category: dom.filterCategory.value,
+                        price: Number(dom.filterPrice.value),
+                    };
+
+                    const filteredVehicles = state.vehicles.filter(v => {
+                        return (filters.category === 'all' || v.category === filters.category) &&
+                            (v.price <= filters.price);
+                    });
+
+                    dom.gridLoader.classList.add('hidden');
+
+                    if (filteredVehicles.length === 0) {
+                        dom.noResults.style.display = 'block';
+                    } else {
+                        dom.vehicleGrid.innerHTML = filteredVehicles.map((v, i) => createVehicleCard(v, i)).join('');
+                        addCardButtonListeners();
+                    }
+                    lucide.createIcons();
+                }, 300);
+            };
+
+            /**
+             * Renders top 3 models on the homepage
+             */
+            const renderTopModels = () => {
+                const topModels = state.vehicles.slice(0, 3);
+                dom.topModelsGrid.innerHTML = topModels.map((v, i) => createVehicleCard(v, i)).join('');
+                addCardButtonListeners();
+                lucide.createIcons();
+            };
+            
+            /**
+             * Populates the model select dropdown in the booking form
+             */
+            const populateBookModelSelect = () => {
+                const availableModels = state.vehicles.filter(v => v.stock !== 'Out of Stock');
+                dom.bookModelSelect.innerHTML = '<option value="">Select a model</option>' + 
+                    availableModels.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+            };
+
+            /**
+             * Adds event listeners to "Book Ride" and "Compare" buttons on vehicle cards
+             */
+            const addCardButtonListeners = () => {
+                document.querySelectorAll('.book-ride-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const vehicleId = e.currentTarget.dataset.id;
+                        const vehicle = state.vehicles.find(v => v.id == vehicleId);
+                        if (vehicle) {
+                            dom.bookModelSelect.value = vehicle.name;
+                            navigate('book');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const vehicleId = Number(e.currentTarget.dataset.id);
+                        toggleCompare(vehicleId);
+                    });
+                });
+            };
+
+            /**
+             * Shows the modal with custom content
+             */
+            const showModal = (title, content) => {
+                dom.modalBody.innerHTML = `<h2 class="text-2xl font-bold mb-6">${title}</h2>${content}`;
+                dom.modalBackdrop.classList.remove('hidden');
+                lucide.createIcons();
+            };
+
+            /**
+             * Hides the modal
+             */
+            const hideModal = () => {
+                dom.modalBackdrop.classList.add('hidden');
+                dom.modalBody.innerHTML = '';
+            };
+            
+            /**
+             * Shows a temporary toast notification
+             */
+            const showNotification = (message) => {
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.textContent = message;
+                dom.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            };
+            
+            /**
+             * Handles booking form submission
+             */
+            const handleBookingSubmit = (e) => {
+                e.preventDefault();
+                const formData = new FormData(dom.bookingForm);
+                const name = formData.get('book-name');
+                const model = formData.get('book-model');
+                
+                const title = `Booking Confirmed, ${name}!`;
+                const content = `
+                    <div class="space-y-4">
+                        <div class="flex justify-center text-green-500 mb-4">
+                            <i data-lucide="check-circle" class="h-16 w-16"></i>
+                        </div>
+                        <p class="text-center text-lg">Thank you for booking a test ride for the <strong>Hero ${model}</strong>.</p>
+                        <p class="text-center text-gray-600 dark:text-gray-300">Our team will contact you shortly on ${formData.get('book-phone')} to confirm your preferred time slot on ${formData.get('book-date')}.</p>
+                        <button id="modal-ok-btn" class="w-full mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-md transition-colors">
+                            Got it!
+                        </button>
+                    </div>
+                `;
+                showModal(title, content);
+                dom.bookingForm.reset();
+                
+                document.getElementById('modal-ok-btn').addEventListener('click', hideModal);
+            };
+            
+            /**
+             * Handles contact form submission
+             */
+            const handleContactSubmit = (e) => {
+                e.preventDefault();
+                const formData = new FormData(dom.contactForm);
+                const name = formData.get('contact-name');
+
+                const title = `Message Sent, ${name}!`;
+                const content = `
+                    <div class="space-y-4">
+                        <div class="flex justify-center text-green-500 mb-4">
+                            <i data-lucide="mail-check" class="h-16 w-16"></i>
+                        </div>
+                        <p class="text-center text-lg">Thank you for reaching out.</p>
+                        <p class="text-center text-gray-600 dark:text-gray-300">We've received your message regarding "<strong>${formData.get('contact-subject')}</strong>" and will get back to you at ${formData.get('contact-email')} as soon as possible.</p>
+                        <button id="modal-ok-btn" class="w-full mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-md transition-colors">
+                            Awesome!
+                        </button>
+                    </div>
+                `;
+                showModal(title, content);
+                dom.contactForm.reset();
+                
+                document.getElementById('modal-ok-btn').addEventListener('click', hideModal);
+            };
+
+            /**
+             * Adds or removes a vehicle from the compare list
+             */
+            const toggleCompare = (vehicleId) => {
+                const index = state.compareList.indexOf(vehicleId);
+                const vehicle = state.vehicles.find(v => v.id === vehicleId);
+                
+                if (index > -1) {
+                    state.compareList.splice(index, 1);
+                } else {
+                    if (state.compareList.length < 3) {
+                        state.compareList.push(vehicleId);
+                        showNotification(`Added ${vehicle.name} to compare`);
+                    } else {
+                        showModal('Compare List Full', '<p>You can only compare up to 3 vehicles at a time. Please remove one to add another.</p>');
+                        return;
+                    }
+                }
+                renderCompareTray();
+                renderVehicles();
+            };
+            
+            /**
+             * Renders the compare tray at the bottom
+             */
+            const renderCompareTray = () => {
+                const count = state.compareList.length;
+                dom.compareCount.textContent = count;
+                
+                if (count > 0) {
+                    dom.compareTray.style.transform = 'translateY(0)';
+                    dom.compareButton.disabled = false;
+                    
+                    dom.compareItems.innerHTML = state.compareList.map(id => {
+                        const vehicle = state.vehicles.find(v => v.id === id);
+                        return `
+                            <div class="flex items-center gap-2 bg-white/50 dark:bg-gray-800/50 p-2 rounded-lg">
+                                <img src="${vehicle.imageUrl}" class="h-10 w-10 object-cover rounded" alt="${vehicle.name}" onerror="this.src='https://placehold.co/100x100/555/FFF?text=IMG'">
+                                <span class="text-sm font-medium hidden sm:inline">${vehicle.name}</span>
+                                <button data-id="${id}" class="remove-compare-item p-1 rounded-full hover:bg-red-200 dark:hover:bg-red-800 text-red-500">
+                                    <i data-lucide="x-circle" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    document.querySelectorAll('.remove-compare-item').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = Number(e.currentTarget.dataset.id);
+                            toggleCompare(id);
+                        });
+                    });
+                    
+                } else {
+                    dom.compareTray.style.transform = 'translateY(100%)';
+                    dom.compareButton.disabled = true;
+                    dom.compareItems.innerHTML = '';
+                }
+                lucide.createIcons();
+            };
+
+            /**
+             * Clears the compare list
+             */
+            const clearCompare = () => {
+                state.compareList = [];
+                renderCompareTray();
+                renderVehicles();
+            };
+            
+            /**
+             * Shows the full side-by-side compare modal
+             */
+            const showCompareModal = () => {
+                const vehiclesToCompare = state.vehicles.filter(v => state.compareList.includes(v.id));
+                
+                let tableHeader = '<th class="p-4 text-left font-bold">Feature</th>';
+                let tableImage = '<td class="p-4 font-medium">Image</td>';
+                let tableName = '<td class="p-4 font-medium">Name</td>';
+                let tablePrice = '<td class="p-4 font-medium">Price</td>';
+                let tableEngine = '<td class="p-4 font-medium">Engine</td>';
+                let tableMileage = '<td class="p-4 font-medium">Mileage</td>';
+                let tablePower = '<td class="p-4 font-medium">Power</td>';
+                let tableStock = '<td class="p-4 font-medium">Stock</td>';
+
+                vehiclesToCompare.forEach(v => {
+                    tableHeader += `<th class="p-4 text-left font-bold text-primary-600 dark:text-primary-400">${v.name}</th>`;
+                    tableImage += `<td class="p-4"><img src="${v.imageUrl}" alt="${v.name}" class="w-full h-32 object-cover rounded-lg" onerror="this.src='https://placehold.co/600x400/555/FFF?text=Image+Error'"></td>`;
+                    tableName += `<td class="p-4">${v.brand} ${v.name}</td>`;
+                    tablePrice += `<td class="p-4 font-bold">${formatCurrency(v.price)}</td>`;
+                    tableEngine += `<td class="p-4">${v.specs.engine}</td>`;
+                    tableMileage += `<td class="p-4">${v.specs.mileage}</td>`;
+                    tablePower += `<td class="p-4">${v.specs.power}</td>`;
+                    tableStock += `<td class="p-4"><span class="px-2 py-1 text-xs font-bold rounded-full ${getStockClass(v.stock)}">${v.stock}</span></td>`;
+                });
+
+                const content = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[600px] border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/30 dark:border-gray-600">${tableHeader}</tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-white/30 dark:border-gray-600 bg-white/20 dark:bg-gray-700/50">${tableImage}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600">${tableName}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600 bg-white/20 dark:bg-gray-700/50">${tablePrice}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600">${tableEngine}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600 bg-white/20 dark:bg-gray-700/50">${tableMileage}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600">${tablePower}</tr>
+                                <tr class="border-b border-white/30 dark:border-gray-600 bg-white/20 dark:bg-gray-700/50">${tableStock}</tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                showModal('Compare Vehicles', content);
+            };
+
+            /**
+             * Calculates and displays the EMI
+             */
+            const calculateEMI = () => {
+                const p = parseFloat(dom.emiAmount.value);
+                const r = parseFloat(dom.emiRate.value) / 12 / 100;
+                const n = parseFloat(dom.emiTenure.value);
+                
+                if (isNaN(p) || isNaN(r) || isNaN(n) || p <= 0 || r <= 0 || n <= 0) {
+                    dom.emiResult.textContent = 'Please enter valid values';
+                    dom.emiResult.classList.add('text-red-500');
+                    return;
+                }
+                
+                const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+                
+                if (isFinite(emi)) {
+                    dom.emiResult.innerHTML = `Your EMI is<br>${formatCurrency(emi)}/month`;
+                    dom.emiResult.classList.remove('text-red-500');
+                } else {
+                    dom.emiResult.textContent = 'Error in calculation';
+                    dom.emiResult.classList.add('text-red-500');
+                }
+            };
+            
+            /**
+             * Sets the min date for the booking form to today
+             */
+            const setMinBookingDate = () => {
+                const today = new Date().toISOString().split('T')[0];
+                dom.bookDateInput.setAttribute('min', today);
+            };
+
+            /**
+             * Initializes the FAQ Accordion
+             */
+            const initAccordion = () => {
+                dom.faqAccordion.querySelectorAll('.accordion-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                        button.setAttribute('aria-expanded', !isExpanded);
+                    });
+                });
+            };
+
+            // --- EVENT LISTENERS ---
+            
+            dom.themeToggle.addEventListener('click', toggleTheme);
+            dom.mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            
+            dom.navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewName = e.currentTarget.dataset.nav;
+                    if (viewName) navigate(viewName);
+                });
+            });
+            dom.navLinkButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewName = e.currentTarget.dataset.nav;
+                    if (viewName) navigate(viewName);
+                });
+            });
+
+            dom.filterApply.addEventListener('click', renderVehicles);
+            dom.filterPrice.addEventListener('input', (e) => {
+                dom.filterPriceValue.textContent = Number(e.target.value).toLocaleString('en-IN');
+            });
+            
+            dom.bookingForm.addEventListener('submit', handleBookingSubmit);
+            dom.contactForm.addEventListener('submit', handleContactSubmit);
+            
+            dom.modalClose.addEventListener('click', hideModal);
+            dom.modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === dom.modalBackdrop) hideModal();
+            });
+
+            dom.compareButton.addEventListener('click', showCompareModal);
+            dom.compareClear.addEventListener('click', clearCompare);
+            
+            dom.emiCalculate.addEventListener('click', calculateEMI);
+            
+            initAccordion();
+
+            // --- INITIALIZATION ---
+            
+            const init = () => {
+                applyTheme();
+                renderTopModels();
+                renderVehicles();
+                populateBookModelSelect();
+                setMinBookingDate();
+                lucide.createIcons();
+            };
+            
+            init();
+        });
+    </script>
+</body>
+</html>
